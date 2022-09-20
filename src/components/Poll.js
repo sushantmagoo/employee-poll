@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import Error from './Error';
 import { handleAddVote } from '../actions/polls';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -13,21 +14,24 @@ const withRouter = Component => {
 	return ComponentWithRouterProp;
 };
 
-const Poll = ({
-	authedUser,
-	qid,
-	currPoll,
-	isDone,
-	users,
-	optionOnePerc,
-	optionTwoPerc,
-	dispatch
-}) => {
-	// const navigate = useNavigate();
+const Poll = props => {
+	if (!props.currPoll) {
+		return <Error />;
+	}
+
+	const {
+		authedUser,
+		qid,
+		currPoll,
+		isDone,
+		users,
+		optionOnePerc,
+		optionTwoPerc,
+		dispatch
+	} = props;
 
 	const handleButtonClick = option => {
 		dispatch(handleAddVote(qid, option));
-		// navigate('/');
 	};
 
 	return (
@@ -93,32 +97,41 @@ const mapStateToProps = ({ authedUser, polls, users }, props) => {
 
 	const currUser = users[authedUser];
 	const currPoll = polls[id];
-	const pollsDoneId = Object.keys(currUser.answers);
-	const isDone = pollsDoneId.includes(id);
 
-	// !NOTE: VOTE PERCENTAGE CALCULATION
-	const optionOneVotes = currPoll.optionOne.votes
-		? currPoll.optionOne.votes.length
-		: 0;
-	const optionTwovotes = currPoll.optionTwo.votes
-		? currPoll.optionTwo.votes.length
-		: 0;
-	const optionOnePerc = Math.round(
-		(optionOneVotes / (optionOneVotes + optionTwovotes)) * 100
-	);
-	const optionTwoPerc = Math.round(
-		(optionTwovotes / (optionOneVotes + optionTwovotes)) * 100
-	);
+	if (!currPoll) {
+		return {
+			authedUser,
+			qid: id,
+			currPoll
+		};
+	} else {
+		const pollsDoneId = Object.keys(currUser.answers);
+		const isDone = pollsDoneId.includes(id);
 
-	return {
-		authedUser,
-		qid: id,
-		currPoll,
-		isDone,
-		users,
-		optionOnePerc,
-		optionTwoPerc
-	};
+		// !NOTE: VOTE PERCENTAGE CALCULATION
+		const optionOneVotes = currPoll.optionOne.votes
+			? currPoll.optionOne.votes.length
+			: 0;
+		const optionTwovotes = currPoll.optionTwo.votes
+			? currPoll.optionTwo.votes.length
+			: 0;
+		const optionOnePerc = Math.round(
+			(optionOneVotes / (optionOneVotes + optionTwovotes)) * 100
+		);
+		const optionTwoPerc = Math.round(
+			(optionTwovotes / (optionOneVotes + optionTwovotes)) * 100
+		);
+
+		return {
+			authedUser,
+			qid: id,
+			currPoll,
+			isDone,
+			users,
+			optionOnePerc,
+			optionTwoPerc
+		};
+	}
 };
 
 export default withRouter(connect(mapStateToProps)(Poll));

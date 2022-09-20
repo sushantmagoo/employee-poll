@@ -9,6 +9,7 @@ import Poll from './Poll';
 import Nav from './Nav';
 import NewPoll from './NewPoll';
 import Login from './Login';
+import Error from './Error';
 
 const App = ({ dispatch, loggedIn }) => {
 	useEffect(() => {
@@ -30,7 +31,8 @@ const App = ({ dispatch, loggedIn }) => {
 						<Route path="/" exact element={<Dashboard />} />
 						<Route path="/leaderboard" element={<Leaderboard />} />
 						<Route path="/new" element={<NewPoll />} />
-						<Route path="/poll/:id" element={<Poll />} />
+						<Route path="/questions/:id" element={<Poll />} />
+						<Route path="*" element={<Error />} />
 					</Routes>
 				</div>
 			)}

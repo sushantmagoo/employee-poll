@@ -10,7 +10,7 @@ const PollList = props => {
 				<div className="poll center" key={poll.id}>
 					<h6>{poll.author}</h6>
 					<div>{formatDate(poll.timestamp)}</div>
-					<Link to={`/poll/${poll.id}`}>
+					<Link to={`/questions/${poll.id}`}>
 						<button className="btn">Show</button>
 					</Link>
 				</div>
